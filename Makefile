@@ -58,7 +58,7 @@ submodules_update:
 	git submodule update
 
 deps_tcxparser:
-	cd python-tcxparser && python setup.py install --record files.txt
+	cd python-tcxparser && python2 setup.py install --record files.txt
 
 clean_deps_tcxparser:
 	cd python-tcxparser && cat files.txt | xargs rm -rf
@@ -106,38 +106,38 @@ backup: $(BACKUP_DIR)
 	zip -r $(BACKUP_DIR)/$(EPOCH)_dbs.zip $(DB_DIR)
 
 PLATFORM=$(shell uname)
-VERSION=$(shell $(PYTHON) garmin.py --version)
+VERSION=$(shell python2 garmin.py --version)
 BIN_FILES=dist/garmin dist/graphs dist/fitbit dist/mshealth
 ZIP_FILES=dist_files/download_create_dbs.sh dist_files/download_update_dbs.sh dist_files/copy_create_dbs.sh dist_files/copy_update_dbs.sh
 zip_packages: package_garmin package_fitbit package_mshealth
 	zip -j -r GarminDb_$(PLATFORM)_$(VERSION).zip GarminConnectConfig.json.example $(BIN_FILES) $(ZIP_FILES)
 
 graphs:
-	$(PYTHON) graphs.py --all
+	python2 graphs.py --all
 
 checkup:
-	$(PYTHON) checkup.py --goals
+	python2 checkup.py --goals
 
 #
 # Garmin targets
 #
 garmin:
-	$(PYTHON) garmin.py --all --download --import --analyze
+	python2 garmin.py --all --download --import --analyze
 
 build_garmin:
-	$(PYTHON) garmin.py --all --import --analyze
+	python2 garmin.py --all --import --analyze
 
 copy_garmin:
-	$(PYTHON) garmin.py --all --copy --import --analyze
+	python2 garmin.py --all --copy --import --analyze
 
 update_garmin:
-	$(PYTHON) garmin.py --all --download --import --analyze --latest
+	python2 garmin.py --all --download --import --analyze --latest
 
 copy_garmin_latest:
-	$(PYTHON) garmin.py --all --copy --import --analyze --latest
+	python2 garmin.py --all --copy --import --analyze --latest
 
 clean_garmin_dbs:
-	$(PYTHON) garmin.py --delete_db
+	python2 garmin.py --delete_db
 
 package_garmin:
 	pyinstaller --clean --noconfirm --onefile garmin.py
@@ -150,10 +150,10 @@ package_garmin:
 # FitBit target
 #
 fitbit:
-	$(PYTHON) fitbit.py
+	python2 fitbit.py
 
 clean_fitbit_db:
-	$(PYTHON) fitbit.py --delete_db
+	python2 fitbit.py --delete_db
 
 package_fitbit:
 	pyinstaller --clean --noconfirm --onefile fitbit.py
@@ -163,10 +163,10 @@ package_fitbit:
 # MS Health target
 #
 mshealth: $(MSHEALTH_DB)
-	$(PYTHON) mshealth.py
+	python2 mshealth.py
 
 clean_mshealth_db:
-	$(PYTHON) mshealth.py --delete_db
+	python2 mshealth.py --delete_db
 
 package_mshealth:
 	pyinstaller --clean --noconfirm --onefile mshealth.py
@@ -187,8 +187,8 @@ test_clean:
 #
 bugreport:
 	uname -a > $(BUGREPORT)
-	which $(PYTHON) >> $(BUGREPORT)
-	$(PYTHON) --version >> $(BUGREPORT) 2>&1
+	which python2 >> $(BUGREPORT)
+	python2 --version >> $(BUGREPORT) 2>&1
 	echo $(PYTHON_PACKAGES)
 	for package in $(PYTHON_PACKAGES); do \
 		pip show $$package >> $(BUGREPORT); \
